@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vizualizácia farby okien zadarmo | Bormax</title>
+<meta name="description" content="Nahrajte fotku svojho domu, vyberte až 3 farby rámov a do 60 minút vám pošleme hotové vizualizácie. Zadarmo a nezáväzne. Okná a dvere DRUTEX od Bormax.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://vizualizacia.bormax.sk/">
+<meta property="og:title" content="Ako budú vyzerať nové okná na vašom dome?">
+<meta property="og:description" content="Nahrajte fotku, vyberte farby, do 60 minút máte vizualizácie v e-maile. Zadarmo.">
+<meta property="og:image" content="https://storage.mlcdn.com/account_image/2138465/SjrDBvrgKaAiZpvaz9236XqWlpJ3sIIiKiyAgSLL.jpg">
+<meta property="og:url" content="https://vizualizacia.bormax.sk/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f4f0; --paper:#ffffff; --ink:#15231b; --muted:#5a6a60;
+    --green:#1f3d2b; --green-soft:#e4ece6; --orange:#e2622b; --orange-dark:#c94f1c;
+    --line:#d7dcd5; --ok:#2e7d4f; --err:#c0392b;
+    --radius:14px; --maxw:600px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px;line-height:1.5}
+  img{display:block;max-width:100%}
+  a{color:var(--green)}
+  button{font:inherit}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px}
+  header{background:var(--green);color:#fff}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:24px;letter-spacing:-.01em;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px}
+  .logo i{display:inline-block;width:22px;height:22px;border:5px solid var(--orange);border-radius:3px}
+  header small{font-size:14px;opacity:.85}
+
+  /* hero */
+  .hero{padding:30px 0 10px}
+  h1{font-size:clamp(30px,7vw,40px);line-height:1.12;font-weight:800;letter-spacing:-.02em;margin:0 0 12px}
+  .hero p{margin:0 0 20px;font-size:19px;color:var(--muted);max-width:34ch}
+
+  /* before/after */
+  .ba{position:relative;aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;background:#dfe3dd;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+  .ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .ba .after{clip-path:inset(0 0 0 var(--cut,50%))}
+  .ba .handle{position:absolute;top:0;bottom:0;left:var(--cut,50%);width:0;border-left:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+  .ba .knob{position:absolute;top:50%;left:var(--cut,50%);transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25);display:grid;place-items:center;color:var(--green);font-weight:800;font-size:16px;letter-spacing:-.05em}
+  .ba .tag{position:absolute;bottom:10px;padding:5px 10px;border-radius:999px;background:rgba(21,35,27,.78);color:#fff;font-size:14px;font-weight:600}
+  .ba .tag.l{left:10px}.ba .tag.r{right:10px}
+  .ba input[type=range]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+  .ba-note{font-size:15px;color:var(--muted);margin:10px 0 0}
+
+  /* steps */
+  .steps{padding:14px 0 40px}
+  .step{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;margin:16px 0}
+  .step h2{display:flex;align-items:center;gap:12px;font-size:21px;margin:0 0 6px;font-weight:700}
+  .step h2 b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:17px}
+  .step .hint{margin:0 0 14px;color:var(--muted);font-size:16px}
+
+  /* upload */
+  .drop{display:block;border:2px dashed #9fb3a6;border-radius:12px;background:var(--green-soft);padding:26px 16px;text-align:center;cursor:pointer}
+  .drop:active{background:#d8e4db}
+  .drop svg{width:44px;height:44px;margin:0 auto 8px;display:block}
+  .drop strong{display:block;font-size:20px;color:var(--green)}
+  .drop span{display:block;font-size:15px;color:var(--muted);margin-top:4px}
+  .drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .preview{display:none;position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .preview img{width:100%;max-height:360px;object-fit:cover}
+  .preview .change{position:absolute;right:10px;bottom:10px;background:#fff;border:0;border-radius:999px;padding:9px 14px;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  .preview .okmark{position:absolute;left:10px;top:10px;background:var(--ok);color:#fff;border-radius:999px;padding:5px 11px;font-size:14px;font-weight:600}
+
+  /* swatches */
+  .counter{font-size:15px;font-weight:600;color:var(--green);margin:0 0 10px}
+  .sw{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;list-style:none;margin:0;padding:0}
+  @media (min-width:480px){.sw{grid-template-columns:repeat(4,1fr)}}
+  .sw button{position:relative;width:100%;padding:0;border:3px solid transparent;border-radius:10px;background:none;cursor:pointer;text-align:left;outline-offset:3px}
+  .sw button img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;border:1px solid var(--line)}
+  .sw button span{display:block;font-size:14px;line-height:1.25;margin:6px 2px 4px;color:var(--ink);font-weight:500}
+  .sw button[aria-pressed=true]{border-color:var(--green)}
+  .sw button[aria-pressed=true]::after{content:attr(data-n);position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:grid;place-items:center;font-size:15px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .sw button:disabled{opacity:.45;cursor:not-allowed}
+
+  /* fields */
+  label.f{display:block;margin:0 0 14px}
+  label.f span{display:block;font-weight:600;margin-bottom:6px;font-size:16px}
+  input[type=email],input[type=tel]{width:100%;font:inherit;font-size:18px;padding:14px 14px;border:1.5px solid #b9c3bc;border-radius:10px;background:#fff;color:var(--ink)}
+  input:focus{outline:3px solid #9fc4ae;outline-offset:1px;border-color:var(--green)}
+  .consent{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--muted);margin:6px 0 18px}
+  .consent input{width:24px;height:24px;flex:0 0 24px;margin:2px 0 0;accent-color:var(--green)}
+  .cta{width:100%;border:0;border-radius:12px;background:var(--orange);color:#fff;font-size:20px;font-weight:700;padding:18px;cursor:pointer;box-shadow:0 4px 0 var(--orange-dark)}
+  .cta:active{transform:translateY(2px);box-shadow:0 2px 0 var(--orange-dark)}
+  .cta:disabled{opacity:.6;cursor:wait;transform:none}
+  .small{font-size:14px;color:var(--muted);margin:12px 0 0;text-align:center}
+  .msg{display:none;border-radius:12px;padding:16px;margin:0 0 14px;font-size:16px}
+  .msg.err{background:#fde8e5;color:#7a2318;border:1px solid #f3b9b1}
+  .field-err{border-color:var(--err)!important}
+
+  /* success */
+  .done{display:none;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px 20px;text-align:center;margin:16px 0}
+  .done .ok{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:34px}
+  .done h2{margin:0 0 8px;font-size:26px}
+  .done p{margin:0 0 6px;color:var(--muted)}
+
+  /* trust + footer */
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 0;font-size:14px;color:var(--muted);text-align:center}
+  .trust div strong{display:block;color:var(--ink);font-size:16px}
+  footer{border-top:1px solid var(--line);padding:22px 0 40px;font-size:14px;color:var(--muted)}
+  footer p{margin:0 0 6px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="https://www.bormax.sk/" aria-label="Bormax"><i></i>Bormax</a>
+    <small>okná a dvere DRUTEX</small>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Ako budú vyzerať nové okná na vašom dome?</h1>
+    <p>Nahrajte fotku, vyberte farby rámov a do 60 minút vám pošleme hotové vizualizácie e-mailom. Zadarmo a nezáväzne.</p>
+
+    <div class="ba" id="ba" style="--cut:50%">
+      <img class="before" src="https://storage.mlcdn.com/account_image/2138465/SjrDBvrgKaAiZpvaz9236XqWlpJ3sIIiKiyAgSLL.jpg" alt="Dom pred vizualizáciou – pôvodné rámy okien">
+      <img class="after" src="https://d8j0ntlcm91z4.cloudfront.net/user_3DGrRWtWte3mvWd1MHLYxsaN6QJ/hf_20261020_102720_ae645707-c42a-429d-aaf2-7c52cb53ff3f.png" alt="Ten istý dom s rámami v dekore Zlatý dub">
+      <div class="handle"></div>
+      <div class="knob" aria-hidden="true">‹ ›</div>
+      <span class="tag l">Pôvodné okná</span>
+      <span class="tag r">Zlatý dub</span>
+      <input type="range" min="0" max="100" value="50" aria-label="Porovnanie pred a po – posúvajte">
+    </div>
+    <p class="ba-note">Posúvajte prstom. Ukážka na reálnej realizácii Bormax.</p>
+  </section>
+
+  <form class="steps" id="vizForm" novalidate>
+
+    <div class="step">
+      <h2><b>1</b>Fotka vášho domu</h2>
+      <p class="hint">Najlepšie spredu, cez deň, aby boli vidieť okná a dvere. Stačí fotka z mobilu.</p>
+      <label class="drop" id="drop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1f3d2b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <strong>Odfotiť alebo vybrať fotku</strong>
+        <span>JPG alebo PNG, do 20 MB</span>
+        <input type="file" id="foto" accept="image/*">
+      </label>
+      <div class="preview" id="preview">
+        <span class="okmark">Fotka pridaná</span>
+        <img id="previewImg" alt="Náhľad vašej fotky">
+        <button type="button" class="change" id="changeBtn">Zmeniť fotku</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2><b>2</b>Farby rámov</h2>
+      <p class="hint">Ťuknite na 1 až 3 farby, ktoré chcete vidieť na svojom dome. Dekory DRUTEX.</p>
+      <p class="counter" id="counter">Vybrané: 0 z 3</p>
+      <ul class="sw" id="swatches"></ul>
+    </div>
+
+    <div class="step">
+      <h2><b>3</b>Kam poslať vizualizácie</h2>
+      <label class="f"><span>Váš e-mail</span><input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="meno@priklad.sk" required></label>
+      <label class="f"><span>Telefón (nepovinné)</span><input type="tel" id="telefon" name="telefon" autocomplete="tel" inputmode="tel" placeholder="0900 000 000"></label>
+      <label class="consent"><input type="checkbox" id="suhlas"><span>Súhlasím, aby spoločnosť Bormax spracovala moju fotografiu a kontaktné údaje na vytvorenie vizualizácie a zaslanie ponuky. Fotografiu uchovávame najviac 90 dní. <a href="https://www.bormax.sk/" target="_blank" rel="noopener">Ochrana osobných údajov</a></span></label>
+      <div class="msg err" id="errorMsg"></div>
+      <button type="submit" class="cta" id="submitBtn">Poslať mi vizualizácie zadarmo</button>
+      <p class="small">Bez záväzkov. Vizualizácie vám prídu e-mailom do 60 minút.</p>
+    </div>
+
+  </form>
+
+  <div class="done" id="done">
+    <div class="ok">✓</div>
+    <h2>Hotovo, pracujeme na tom</h2>
+    <p>Vizualizácie vášho domu pošleme na <strong id="doneEmail"></strong> do 60 minút.</p>
+    <p>Ak e-mail nevidíte, skontrolujte priečinok s nevyžiadanou poštou.</p>
+  </div>
+
+  <div class="trust">
+    <div><strong>10+ rokov</strong>skúseností</div>
+    <div><strong>DRUTEX</strong>výhradný partner</div>
+    <div><strong>Vlastný tím</strong>montáže</div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Bormax</strong> · okná, dvere, posuvné systémy, garážové brány a tienenie · <a href="https://www.bormax.sk/kontakt">Kontakt</a></p>
+    <p>Vizualizácie vznikajú automaticky z vašej fotografie a sú orientačné. Skutočný odtieň dekoru sa môže líšiť. Technicky zabezpečuje YNK media.</p>
+  </div>
+</footer>
+
+<!-- Hidden submit to Apps Script (same pattern as the YNK brief page) -->
+<iframe name="viz_iframe" id="viz_iframe" style="display:none" title="odoslanie"></iframe>
+<form id="viz_hidden_form" action="" method="POST" target="viz_iframe" style="display:none">
+  <input type="hidden" name="payload" id="viz_payload">
+</form>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+// Apps Script web app URL (Nasadiť → Webová aplikácia → Spustiť ako: ja, Prístup: ktokoľvek).
+const APPS_SCRIPT_URL = "REPLACE_WITH_APPS_SCRIPT_WEB_APP_URL";
+const MAX_COLORS = 3;
+const MAX_SIDE = 1600;   // px – dlhšia strana po zmenšení
+const JPEG_Q = 0.86;
+const COLORS = [
+  ["1. Biely FX","01-biely-fx"],["2. Antracit","02-antracit"],["3. Čadičová sivá","03-cadicova-siva"],
+  ["4. Kremeňová sivá","04-kremenova-siva"],["5. Jet black","05-jet-black"],["6. Zlatý dub","06-zlaty-dub"],
+  ["7. Winchester","07-winchester"],["8. Orech","08-orech"],["9. Tmavý dub","09-tmavy-dub"],
+  ["10. Mechová zelená","10-mechova-zelena"],["11. Tmavá červená","11-tmava-cervena"],["12. Brilantová modrá","12-brilantova-modra"]
+];
+// ───────────────────────────────────────────────────────────────
+
+// before/after slider
+const ba = document.getElementById('ba');
+ba.querySelector('input[type=range]').addEventListener('input', e => ba.style.setProperty('--cut', e.target.value + '%'));
+
+// swatches
+const swEl = document.getElementById('swatches');
+const selected = [];
+COLORS.forEach(([name, file]) => {
+  const li = document.createElement('li');
+  const b = document.createElement('button');
+  b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.dataset.name = name;
+  b.innerHTML = `<img src="assets/vzorky/${file}.jpg" alt="" loading="lazy"><span>${name.replace(/^\d+\.\s/, '')}</span>`;
+  b.addEventListener('click', () => toggle(b));
+  li.appendChild(b); swEl.appendChild(li);
+});
+function toggle(b) {
+  const i = selected.indexOf(b);
+  if (i > -1) selected.splice(i, 1); else if (selected.length < MAX_COLORS) selected.push(b);
+  render();
+}
+function render() {
+  swEl.querySelectorAll('button').forEach(b => {
+    const i = selected.indexOf(b);
+    b.setAttribute('aria-pressed', i > -1 ? 'true' : 'false');
+    b.dataset.n = i > -1 ? i + 1 : '';
+    b.disabled = i === -1 && selected.length >= MAX_COLORS;
+  });
+  document.getElementById('counter').textContent = selected.length >= MAX_COLORS
+    ? 'Vybrané: 3 z 3 – ďalšiu pridáte odznačením inej'
+    : `Vybrané: ${selected.length} z ${MAX_COLORS}`;
+}
+
+// photo
+const fileInput = document.getElementById('foto');
+const drop = document.getElementById('drop');
+const preview = document.getElementById('preview');
+let photoData = null; // {base64, name, w, h}
+fileInput.addEventListener('change', async () => {
+  const f = fileInput.files && fileInput.files[0];
+  if (!f) return;
+  if (!/^image\//.test(f.type)) return showError('Vyberte prosím fotografiu (JPG alebo PNG).');
+  if (f.size > 20 * 1024 * 1024) return showError('Fotka je väčšia ako 20 MB. Skúste inú alebo ju odfoťte znova.');
+  try {
+    photoData = await shrink(f);
+    document.getElementById('previewImg').src = 'data:image/jpeg;base64,' + photoData.base64;
+    drop.style.display = 'none'; preview.style.display = 'block'; hideError();
+  } catch (e) { showError('Fotku sa nepodarilo načítať. Skúste inú.'); }
+});
+document.getElementById('changeBtn').addEventListener('click', () => { fileInput.value = ''; photoData = null; preview.style.display = 'none'; drop.style.display = 'block'; });
+
+function shrink(file) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let w = img.naturalWidth, h = img.naturalHeight;
+      const s = Math.min(1, MAX_SIDE / Math.max(w, h));
+      w = Math.round(w * s); h = Math.round(h * s);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      const b64 = c.toDataURL('image/jpeg', JPEG_Q).split(',')[1];
+      res({ base64: b64, name: file.name, w, h });
+    };
+    img.onerror = rej;
+    img.src = url;
+  });
+}
+
+// submit
+function showError(t) { const m = document.getElementById('errorMsg'); m.textContent = t; m.style.display = 'block'; m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+function hideError() { document.getElementById('errorMsg').style.display = 'none'; }
+
+document.getElementById('vizForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const email = document.getElementById('email');
+  const tel = document.getElementById('telefon');
+  const suhlas = document.getElementById('suhlas');
+  [email].forEach(e => e.classList.remove('field-err'));
+  if (!photoData) return showError('Pridajte prosím fotku domu (krok 1).');
+  if (!selected.length) return showError('Vyberte aspoň jednu farbu rámov (krok 2).');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) { email.classList.add('field-err'); email.focus(); return showError('Zadajte platný e-mail, kam máme vizualizácie poslať.'); }
+  if (!suhlas.checked) return showError('Potvrďte prosím súhlas so spracovaním fotografie a údajov.');
+  hideError();
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Odosielam fotku…';
+
+  const payload = {
+    email: email.value.trim(),
+    telefon: tel.value.trim(),
+    farby: selected.map(b => b.dataset.name).join(', '),
+    suhlas: 'Súhlasím',
+    foto_base64: photoData.base64,
+    foto_nazov: photoData.name,
+    foto_rozmer: photoData.w + 'x' + photoData.h,
+    zdroj: location.hostname,
+    ua: navigator.userAgent.slice(0, 120)
+  };
+  const hf = document.getElementById('viz_hidden_form');
+  hf.action = APPS_SCRIPT_URL;
+  document.getElementById('viz_payload').value = JSON.stringify(payload);
+
+  let done = false;
+  const fail = setTimeout(() => { if (done) return; done = true; btn.disabled = false; btn.textContent = 'Poslať mi vizualizácie zadarmo'; showError('Odoslanie trvá príliš dlho. Skontrolujte pripojenie a skúste to znova, alebo nám fotku pošlite e-mailom na info@bormax.sk.'); }, 45000);
+  document.getElementById('viz_iframe').onload = () => {
+    if (done) return; done = true; clearTimeout(fail);
+    document.getElementById('vizForm').style.display = 'none';
+    document.getElementById('doneEmail').textContent = payload.email;
+    const d = document.getElementById('done'); d.style.display = 'block'; d.scrollIntoView({ behavior: 'smooth' });
+  };
+  hf.submit();
+});
+</script>
+</body>
+</html>
