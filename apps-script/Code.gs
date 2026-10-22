@@ -12,6 +12,7 @@ var MAX_BYTES        = 12 * 1024 * 1024;
 
 // ---------- 1. Príjem zo stránky ----------
 function doPost(e) {
+  if (!e) return setupTriggers(); // spustené ručne z editora → nastavenie
   var out = { ok: false };
   try {
     var raw = (e && e.parameter && e.parameter.payload) || (e && e.postData && e.postData.contents) || '{}';
@@ -70,7 +71,7 @@ function getSheet_() {
 }
 
 // ---------- 2. Stiahnutie hotových vizualizácií na Drive ----------
-// Každých 10 min: v priečinku "hotove" nájde *.json (zapíše ich Claude) a stiahne obrázky.
+// Každú hodinu: v priečinku "hotove" nájde *.json (zapíše ich Claude) a stiahne obrázky.
 // JSON: {"email":"…","datum":"2026-10-21","farby":[…],"obrazky":[{"nazov":"Antracit","url":"https://…"}],"original":"https://…"}
 function saveResults() {
   var folder = DriveApp.getFolderById(HOTOVE_FOLDER);
@@ -112,9 +113,9 @@ function markStatus_(email, stamp, status) {
 // ---------- 3. Jednorazové nastavenie ----------
 function setupTriggers() {
   var have = ScriptApp.getProjectTriggers().map(function (t) { return t.getHandlerFunction(); });
-  if (have.indexOf('saveResults') < 0) ScriptApp.newTrigger('saveResults').timeBased().everyMinutes(10).create();
+  if (have.indexOf('saveResults') < 0) ScriptApp.newTrigger('saveResults').timeBased().everyHours(1).create();
   getSheet_();
-  Logger.log('OK – trigger saveResults každých 10 min, list "' + SHEET_NAME + '" pripravený');
+  Logger.log('OK – trigger saveResults každú hodinu, list "' + SHEET_NAME + '" pripravený');
 }
 
 // Test bez stránky: vytvorí riadok s malým obrázkom.
