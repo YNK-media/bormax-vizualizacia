@@ -31,8 +31,9 @@
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px}
   header{background:var(--green);color:#fff}
   header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .logo{font-weight:800;font-size:24px;letter-spacing:-.01em;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px}
-  .logo i{display:inline-block;width:22px;height:22px;border:5px solid var(--orange);border-radius:3px}
+  .logo{display:flex;align-items:center;text-decoration:none}
+  .logo img{height:30px;width:auto;display:block}
+  @media (max-width:480px){.logo img{height:26px}}
   header small{font-size:14px;opacity:.85}
 
   /* hero */
@@ -114,7 +115,7 @@
 
 <header>
   <div class="wrap">
-    <a class="logo" href="https://www.bormax.sk/" aria-label="Bormax"><i></i>Bormax</a>
+    <a class="logo" href="https://www.bormax.sk/" aria-label="Bormax"><img src="assets/logo-orange-white.png?v=2" alt="Bormax" width="900" height="193"></a>
     <small>okná a dvere DRUTEX</small>
   </div>
 </header>
