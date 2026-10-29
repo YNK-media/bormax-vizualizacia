@@ -10,7 +10,7 @@ var PRIJATE_FOLDER   = '1e5ExJ1x2Q09xpz6Q6uhnnvVOhC2MJ_xX';               // BOR
 var HOTOVE_FOLDER    = '1EhAHhmzqv3-5pRz0mujx3HBAhWRkJoDe';               // BORMAX - Claude/Vizualizator okien/hotove
 var MAX_BYTES        = 12 * 1024 * 1024;
 var NOTIFY_TO        = 'martin@bormax.sk';                                  // klient – notifikácia o každom hotovom leade (viac adries oddeľ čiarkou)
-var ALARM_TO         = 'tomas@ynk.media';                                   // YNK – iba technický alarm, keď dopyt stojí nespracovaný (hodinová úloha nebežala)
+var ALARM_TO         = 'team@ynk.media';                                  // YNK – iba technický alarm, keď dopyt stojí nespracovaný (hodinová úloha nebežala)
 var STALE_MINUTES    = 90;                                                  // po koľkých minútach bez spracovania poslať alarm
 var SHEET_URL        = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID;
 
