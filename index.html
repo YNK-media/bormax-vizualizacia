@@ -15,6 +15,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Meranie: Google tag (GA4 BORMAX G-B6J2PGZ8C5 – generate_lead sa importuje do Google Ads) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B6J2PGZ8C5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B6J2PGZ8C5');
+</script>
+<!-- Meranie: Meta Pixel BORMAX 1546389223098777 (Lead pre kampaň vizualizácie) -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1546389223098777');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1546389223098777&ev=PageView&noscript=1"></noscript>
 <style>
   :root{
     --bg:#f3f4f0; --paper:#ffffff; --ink:#15231b; --muted:#5a6a60;
@@ -287,6 +306,17 @@ function shrink(file) {
   });
 }
 
+// meranie leadu – volá sa len po potvrdenom odoslaní (showDone), najviac raz
+let leadTracked = false;
+function trackLead() {
+  if (leadTracked) return;
+  leadTracked = true;
+  try {
+    if (typeof gtag === 'function') gtag('event', 'generate_lead', { value: 1, currency: 'EUR', form_name: 'vizualizacia_okien', farby: selected.length });
+    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Vizualizacia okien', value: 1, currency: 'EUR' });
+  } catch (e) {}
+}
+
 // submit
 function showError(t) { const m = document.getElementById('errorMsg'); m.textContent = t; m.style.display = 'block'; m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 function hideError() { document.getElementById('errorMsg').style.display = 'none'; }
@@ -321,6 +351,7 @@ document.getElementById('vizForm').addEventListener('submit', ev => {
   body.append('payload', JSON.stringify(payload));
 
   function showDone() {
+    trackLead();
     document.getElementById('vizForm').style.display = 'none';
     document.getElementById('doneEmail').textContent = payload.email;
     const d = document.getElementById('done'); d.style.display = 'block'; d.scrollIntoView({ behavior: 'smooth' });
