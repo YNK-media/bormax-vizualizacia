@@ -12,6 +12,12 @@ Live: https://vizualizacia.bormax.sk (GitHub Pages z vetvy `main`, vlastná dom�
 4. `saveResults()` v Apps Scripte každých 10 min stiahne hotové obrázky z JSON na Drive.
 5. MailerLite automatizácia pošle e-mail s vizualizáciami a o 2 dni follow-up.
 
+## Meranie
+
+- Google tag GA4 **G-B6J2PGZ8C5** (vlastníctvo BORMAX, rovnaký stream ako www.bormax.sk) – `page_view` a po potvrdenom odoslaní (`showDone`) udalosť **`generate_lead`** (value 1 EUR, `form_name: vizualizacia_okien`). Udalosť je kľúčová a importuje sa do Google Ads ako primárna konverzia „bormax.sk (web) generate_lead“.
+- Meta Pixel **1546389223098777** – `PageView` a po odoslaní **`Lead`** (value 1 EUR) pre Meta kampaň vizualizácie.
+- Lead sa meria len raz a iba keď Apps Script vráti `{"ok":true}` (alebo sa načíta záložný iframe), nie pri chybe.
+
 ## Nasadenie Apps Scriptu
 
 1. script.google.com → projekt „Projekt bez mena" (alebo nový) → vložiť `apps-script/Code.gs`.
