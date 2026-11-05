@@ -203,20 +203,19 @@
   footer{border-top:1px solid var(--line);padding:22px 0 40px;font-size:14px;color:var(--muted)}
   footer p{margin:0 0 6px}
 
-  /* cookie lišta – neblokuje stránku, Prijať a Odmietnuť sú rovnocenné */
-  .ck{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(0,0,0,.12);padding:16px 0 calc(16px + env(safe-area-inset-bottom))}
+  /* cookie lišta – nízka, neblokuje stránku, Prijať a Odmietnuť sú rovnocenné */
+  .ck{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.10);padding:10px 0 calc(10px + env(safe-area-inset-bottom));max-height:100vh;overflow:auto}
   .ck[hidden]{display:none}
-  .ck h2{font-size:18px;margin:0 0 6px}
-  .ck p{font-size:15px;color:var(--muted);margin:0 0 12px}
-  .ck .ck-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .ck button.ck-b{border:2px solid var(--green);background:var(--green);color:#fff;border-radius:10px;padding:12px 8px;font-size:16px;font-weight:700;cursor:pointer}
+  .ck .ck-row{display:flex;align-items:center;gap:14px}
+  .ck p{flex:1;font-size:14px;line-height:1.35;color:var(--muted);margin:0}
+  .ck .ck-btns{display:grid;grid-template-columns:repeat(3,auto);gap:6px;flex:0 0 auto}
+  .ck button.ck-b{border:2px solid var(--green);background:var(--green);color:#fff;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:700;line-height:1.2;cursor:pointer;white-space:nowrap}
   .ck button.ck-b:focus-visible{outline:3px solid #9fc4ae;outline-offset:2px}
-  .ck .ck-opts{margin:4px 0 12px}
-  .ck .ck-opts label{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--muted);margin:0 0 10px}
-  .ck .ck-opts input{width:22px;height:22px;flex:0 0 22px;margin:2px 0 0;accent-color:var(--green)}
+  .ck .ck-opts{margin:0 0 10px}
+  .ck .ck-opts label{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.35;color:var(--muted);margin:0 0 8px}
+  .ck .ck-opts input{width:20px;height:20px;flex:0 0 20px;margin:0;accent-color:var(--green)}
   .ck .ck-opts strong{color:var(--ink)}
-  .ck{max-height:100vh;overflow:auto}
-  @media (max-width:480px){.ck{padding-top:12px}.ck h2{font-size:16px;margin-bottom:4px}.ck p{font-size:14px;margin-bottom:10px}.ck .ck-btns{gap:6px}.ck button.ck-b{font-size:14px;padding:10px 4px;line-height:1.2}}
+  @media (max-width:560px){.ck .ck-row{display:block}.ck p{margin:0 0 8px}.ck .ck-btns{grid-template-columns:repeat(3,1fr)}.ck button.ck-b{padding:8px 4px}}
   .linkbtn{background:none;border:0;padding:0;color:var(--green);text-decoration:underline;cursor:pointer;font-size:inherit}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -309,18 +308,19 @@
 </footer>
 
 <!-- Cookie lišta -->
-<div class="ck" id="ck" role="dialog" aria-modal="false" aria-labelledby="ckTitle" hidden>
+<div class="ck" id="ck" role="dialog" aria-modal="false" aria-label="Súhlas s cookies" hidden>
   <div class="wrap">
-    <h2 id="ckTitle">Cookies</h2>
-    <p>Stránka funguje aj bez cookies. S vaším súhlasom použijeme Google Analytics (štatistika návštevnosti) a Meta Pixel a Google (meranie reklám Bormax). Voľbu môžete kedykoľvek zmeniť cez „Nastavenia cookies“ dole na stránke.</p>
     <div class="ck-opts" id="ckOpts" hidden>
       <label><input type="checkbox" id="ckStats"><span><strong>Štatistické</strong> – Google Analytics 4 (Google Ireland Ltd.): počet návštev a odoslaných žiadostí. Cookies _ga, _ga_*, platnosť do 2 rokov.</span></label>
       <label><input type="checkbox" id="ckMkt"><span><strong>Marketingové</strong> – Meta Pixel (Meta Platforms Ireland Ltd.) a reklamné signály Google: meranie výsledkov reklám a ich cielenie. Cookies _fbp, _fbc, _gcl_*, platnosť do 90 dní.</span></label>
     </div>
-    <div class="ck-btns">
-      <button type="button" class="ck-b" id="ckAccept">Prijať všetko</button>
-      <button type="button" class="ck-b" id="ckReject">Odmietnuť všetko</button>
-      <button type="button" class="ck-b" id="ckMore">Nastavenia</button>
+    <div class="ck-row">
+      <p>S vaším súhlasom použijeme cookies Google a Meta na štatistiku návštevnosti a meranie reklám. Stránka funguje aj bez nich.</p>
+      <div class="ck-btns">
+        <button type="button" class="ck-b" id="ckAccept">Prijať</button>
+        <button type="button" class="ck-b" id="ckReject">Odmietnuť</button>
+        <button type="button" class="ck-b" id="ckMore">Nastavenia</button>
+      </div>
     </div>
   </div>
 </div>
@@ -507,10 +507,10 @@ document.getElementById('vizForm').addEventListener('submit', ev => {
   document.getElementById('ckAccept').onclick = function () { hide(); bormaxConsent.set(true, true); };
   document.getElementById('ckReject').onclick = function () { hide(); bormaxConsent.set(false, false); };
   more.onclick = function () {
-    if (opts.hidden) { opts.hidden = false; more.textContent = 'Uložiť výber'; st.focus(); return; }
+    if (opts.hidden) { opts.hidden = false; more.textContent = 'Uložiť';  st.focus(); return; }
     hide(); bormaxConsent.set(st.checked, mk.checked);
   };
-  document.getElementById('ckOpen').onclick = function () { opts.hidden = false; more.textContent = 'Uložiť výber'; show(); };
+  document.getElementById('ckOpen').onclick = function () { opts.hidden = false; more.textContent = 'Uložiť'; show(); };
   if (!bormaxConsent.get()) show();
 })();
 </script>
