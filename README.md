@@ -14,6 +14,13 @@ Live: https://vizualizacia.bormax.sk (GitHub Pages z vetvy `main`, vlastná dom�
 
 ## Meranie
 
+**Všetko meranie sa spúšťa až po súhlase v cookie lište** (§ 109 ods. 8 zákona č. 452/2021 Z. z.). Bez súhlasu sa nenačíta `gtag.js` ani `fbevents.js` a neukladajú sa žiadne cookies.
+
+- Lišta: tlačidlá **Prijať všetko / Odmietnuť všetko / Nastavenia** v rovnakom štýle, neblokuje stránku; zatvorenie bez voľby = bez súhlasu.
+- Kategórie (v Nastaveniach, nezaškrtnuté): **Štatistické** = GA4; **Marketingové** = Meta Pixel + reklamné signály Google (Consent Mode v2: `ad_storage`, `ad_user_data`, `ad_personalization`).
+- Voľba sa ukladá do `localStorage` (`bormax_cookie_consent`, platnosť 12 mesiacov, potom sa lišta zobrazí znova). Zmena/odvolanie: odkaz **Nastavenia cookies** v pätičke – pri odvolaní sa zmažú cookies `_ga*`, `_gid`, `_gcl_*`, `_fbp`, `_fbc` a stránka sa načíta znova.
+- Test: `tests/test_consent.js` (Playwright, 23 kontrol).
+
 - Google tag GA4 **G-B6J2PGZ8C5** (vlastníctvo BORMAX, rovnaký stream ako www.bormax.sk) – `page_view` a po potvrdenom odoslaní (`showDone`) udalosť **`generate_lead`** (value 1 EUR, `form_name: vizualizacia_okien`). Udalosť je kľúčová a importuje sa do Google Ads ako primárna konverzia „bormax.sk (web) generate_lead“.
 - Meta Pixel **1546389223098777** – `PageView` a po odoslaní **`Lead`** (value 1 EUR) pre Meta kampaň vizualizácie.
 - Lead sa meria len raz a iba keď Apps Script vráti `{"ok":true}` (alebo sa načíta záložný iframe), nie pri chybe.

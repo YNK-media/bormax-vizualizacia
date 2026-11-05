@@ -15,25 +15,100 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Meranie: Google tag (GA4 BORMAX G-B6J2PGZ8C5 – generate_lead sa importuje do Google Ads) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B6J2PGZ8C5"></script>
+<!-- Meranie: spúšťa sa AŽ PO SÚHLASE v cookie lište (§ 109 ods. 8 zákona č. 452/2021 Z. z.).
+     Štatistické = Google Analytics 4 (G-B6J2PGZ8C5); Marketingové = Meta Pixel (1546389223098777) + reklamné signály Google.
+     Bez súhlasu sa nenačíta gtag.js ani fbevents.js a neukladajú sa žiadne cookies. -->
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-B6J2PGZ8C5');
+(function () {
+  var KEY = 'bormax_cookie_consent', VERSION = 1, MAX_AGE_DAYS = 365;
+  var GA_ID = 'G-B6J2PGZ8C5', PIXEL_ID = '1546389223098777';
+  var loaded = { ga: false, pixel: false };
+
+  function read() {
+    try {
+      var c = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!c || c.v !== VERSION) return null;
+      if (Date.now() - c.ts > MAX_AGE_DAYS * 864e5) return null;   // po roku sa pýtame znova
+      return c;
+    } catch (e) { return null; }
+  }
+  function save(stats, mkt) {
+    var c = { v: VERSION, stats: !!stats, mkt: !!mkt, ts: Date.now() };
+    try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {}
+    return c;
+  }
+
+  function consentUpdate(c) {
+    gtag('consent', 'update', {
+      analytics_storage: c.stats ? 'granted' : 'denied',
+      ad_storage: c.mkt ? 'granted' : 'denied',
+      ad_user_data: c.mkt ? 'granted' : 'denied',
+      ad_personalization: c.mkt ? 'granted' : 'denied'
+    });
+  }
+
+  function loadGoogle(c) {
+    if (loaded.ga) { consentUpdate(c); return; }   // rozšírenie súhlasu bez obnovenia stránky
+    loaded.ga = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { dataLayer.push(arguments); };
+    // Consent Mode v2 – všetko odmietnuté, potom povolíme len to, s čím návštevník súhlasil
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    consentUpdate(c);
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+    var t = document.createElement('script');
+    t.async = true; t.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(t);
+  }
+
+  function loadPixel() {
+    if (loaded.pixel) return;
+    loaded.pixel = true;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', PIXEL_ID);
+    fbq('track', 'PageView');
+  }
+
+  function apply(c) {
+    if (!c) return;
+    if (c.stats || c.mkt) loadGoogle(c);
+    if (c.mkt) loadPixel();
+  }
+
+  // odvolanie súhlasu: zmazať cookies meracích nástrojov a načítať stránku znova bez nich
+  function wipe() {
+    var names = document.cookie.split(';').map(function (x) { return x.split('=')[0].trim(); })
+      .filter(function (n) { return /^(_ga|_gid|_gat|_gcl_|_fbp|_fbc)/.test(n); });
+    var host = location.hostname, parts = host.split('.'), domains = ['', host];
+    for (var i = 1; i < parts.length - 1; i++) domains.push('.' + parts.slice(i).join('.'));
+    names.forEach(function (n) {
+      domains.forEach(function (d) {
+        document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : '');
+      });
+    });
+  }
+
+  window.bormaxConsent = {
+    get: read,
+    set: function (stats, mkt) {
+      var prev = read();
+      var c = save(stats, mkt);
+      var downgrade = (loaded.ga && !c.stats && !c.mkt) || (loaded.pixel && !c.mkt) ||
+                      (prev && ((prev.stats && !c.stats) || (prev.mkt && !c.mkt)));
+      if (downgrade) { wipe(); location.reload(); return c; }
+      apply(c);
+      return c;
+    }
+  };
+
+  apply(read());
+})();
 </script>
-<!-- Meranie: Meta Pixel BORMAX 1546389223098777 (Lead pre kampaň vizualizácie) -->
-<script>
-  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-  document,'script','https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '1546389223098777');
-  fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1546389223098777&ev=PageView&noscript=1"></noscript>
 <style>
   :root{
     --bg:#f3f4f0; --paper:#ffffff; --ink:#15231b; --muted:#5a6a60;
@@ -127,6 +202,21 @@
   .trust div strong{display:block;color:var(--ink);font-size:16px}
   footer{border-top:1px solid var(--line);padding:22px 0 40px;font-size:14px;color:var(--muted)}
   footer p{margin:0 0 6px}
+
+  /* cookie lišta – nízka, neblokuje stránku, Prijať a Odmietnuť sú rovnocenné */
+  .ck{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.10);padding:10px 0 calc(10px + env(safe-area-inset-bottom));max-height:100vh;overflow:auto}
+  .ck[hidden]{display:none}
+  .ck .ck-row{display:flex;align-items:center;gap:14px}
+  .ck p{flex:1;font-size:14px;line-height:1.35;color:var(--muted);margin:0}
+  .ck .ck-btns{display:grid;grid-template-columns:repeat(3,auto);gap:6px;flex:0 0 auto}
+  .ck button.ck-b{border:2px solid var(--green);background:var(--green);color:#fff;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:700;line-height:1.2;cursor:pointer;white-space:nowrap}
+  .ck button.ck-b:focus-visible{outline:3px solid #9fc4ae;outline-offset:2px}
+  .ck .ck-opts{margin:0 0 10px}
+  .ck .ck-opts label{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.35;color:var(--muted);margin:0 0 8px}
+  .ck .ck-opts input{width:20px;height:20px;flex:0 0 20px;margin:0;accent-color:var(--green)}
+  .ck .ck-opts strong{color:var(--ink)}
+  @media (max-width:560px){.ck .ck-row{display:block}.ck p{margin:0 0 8px}.ck .ck-btns{grid-template-columns:repeat(3,1fr)}.ck button.ck-b{padding:8px 4px}}
+  .linkbtn{background:none;border:0;padding:0;color:var(--green);text-decoration:underline;cursor:pointer;font-size:inherit}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -213,8 +303,27 @@
   <div class="wrap">
     <p><strong>Bormax</strong> · okná, dvere, posuvné systémy, garážové brány a tienenie · <a href="https://www.bormax.sk/kontakt">Kontakt</a></p>
     <p>Vizualizácie vznikajú automaticky z vašej fotografie a sú orientačné. Skutočný odtieň dekoru sa môže líšiť. Technicky zabezpečuje YNK media.</p>
+    <p><button type="button" class="linkbtn" id="ckOpen">Nastavenia cookies</button></p>
   </div>
 </footer>
+
+<!-- Cookie lišta -->
+<div class="ck" id="ck" role="dialog" aria-modal="false" aria-label="Súhlas s cookies" hidden>
+  <div class="wrap">
+    <div class="ck-opts" id="ckOpts" hidden>
+      <label><input type="checkbox" id="ckStats"><span><strong>Štatistické</strong> – Google Analytics 4 (Google Ireland Ltd.): počet návštev a odoslaných žiadostí. Cookies _ga, _ga_*, platnosť do 2 rokov.</span></label>
+      <label><input type="checkbox" id="ckMkt"><span><strong>Marketingové</strong> – Meta Pixel (Meta Platforms Ireland Ltd.) a reklamné signály Google: meranie výsledkov reklám a ich cielenie. Cookies _fbp, _fbc, _gcl_*, platnosť do 90 dní.</span></label>
+    </div>
+    <div class="ck-row">
+      <p>S vaším súhlasom použijeme cookies Google a Meta na štatistiku návštevnosti a meranie reklám. Stránka funguje aj bez nich.</p>
+      <div class="ck-btns">
+        <button type="button" class="ck-b" id="ckAccept">Prijať</button>
+        <button type="button" class="ck-b" id="ckReject">Odmietnuť</button>
+        <button type="button" class="ck-b" id="ckMore">Nastavenia</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Hidden submit to Apps Script (same pattern as the YNK brief page) -->
 <iframe name="viz_iframe" id="viz_iframe" style="display:none" title="odoslanie"></iframe>
@@ -383,6 +492,27 @@ document.getElementById('vizForm').addEventListener('submit', ev => {
       hf.submit();
     });
 });
+</script>
+<script>
+// cookie lišta – zatvorenie bez voľby = bez súhlasu (nič sa nespúšťa)
+(function () {
+  var ck = document.getElementById('ck'), opts = document.getElementById('ckOpts'), more = document.getElementById('ckMore');
+  var st = document.getElementById('ckStats'), mk = document.getElementById('ckMkt');
+  function show() {
+    var c = bormaxConsent.get();
+    st.checked = !!(c && c.stats); mk.checked = !!(c && c.mkt);
+    ck.hidden = false;
+  }
+  function hide() { ck.hidden = true; opts.hidden = true; more.textContent = 'Nastavenia'; }
+  document.getElementById('ckAccept').onclick = function () { hide(); bormaxConsent.set(true, true); };
+  document.getElementById('ckReject').onclick = function () { hide(); bormaxConsent.set(false, false); };
+  more.onclick = function () {
+    if (opts.hidden) { opts.hidden = false; more.textContent = 'Uložiť';  st.focus(); return; }
+    hide(); bormaxConsent.set(st.checked, mk.checked);
+  };
+  document.getElementById('ckOpen').onclick = function () { opts.hidden = false; more.textContent = 'Uložiť'; show(); };
+  if (!bormaxConsent.get()) show();
+})();
 </script>
 </body>
 </html>
